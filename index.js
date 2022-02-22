@@ -1,24 +1,49 @@
-const Stack = require('./Stack');
-let myStackObject = new Stack();
-let resetTime = 3;
-
-
-//Stack Operator main function
-function stackCommandInterface() {
+const stackCommandInterface = require('./StackOperations');
+const queueCommandInterface = require('./QueueOperations');
+//command line interface function
+function runCommandLineInterface() {
     let options = {
-        1: "push",
-        2: "pop",
-        3: "viewStack",
-        4: "size",
-        5: "peek",
-        6: "End Process"
+        1: 'Perform Stack Operations',
+        2: 'Perform Queue operations',
+        3: 'Exit'
     }
-    showOptions(options).then(function (resData) {
-        getUserInputTerminal("Choose the number respective to Stack Operation : ").then(function (optionReceived) {
-            performStackOperations(optionReceived)
+    showOptions(options).then(function (resolvedData) {
+        getUserInputTerminal("Choose number respective to Data Structure Operations :").then(function (resolvedOption) {
+            console.log(resolvedOption)
+            switch (Number(resolvedOption)) {
+                case 1:
+                    stackCommandInterface()
+                    break;
+                case 2:
+                    queueCommandInterface()
+                    break;
+                case 3:
+                    process.exit()
+                    break;
+                default:
+                    resetOperations()
+            }
         })
     })
 }
+
+
+
+
+//reset Stack operations in 5sec time interval
+function resetOperations() {
+    let resetTime = 3
+    console.log("No valid operation selected. Resetting operations")
+    let intervalTimer = setInterval(() => {
+        if (resetTime >= 1)
+            console.log(resetTime--)
+        else {
+            runCommandLineInterface()
+            clearInterval(intervalTimer)
+        }
+    }, 1000);
+}
+
 
 
 //user Input logic from terminal encapsulated in a Promise
@@ -35,71 +60,15 @@ function getUserInputTerminal(paramTextToShowUser) {
     })
 }
 
-// Executing Stack Operations as per option selected
-function performStackOperations(optionReceived) {
-    switch (Number(optionReceived)) {
-        case 1:
-            performPush()
-            break;
-        case 2:
-            myStackObject.pop()
-            stackCommandInterface()
-            break;
-        case 3:
-            myStackObject.viewStack()
-            stackCommandInterface()
-            break;
-        case 4:
-            myStackObject.size()
-            stackCommandInterface()
-            break;
-        case 5:
-            myStackObject.peek()
-            stackCommandInterface()
-            break;
-        case 6:
-            process.exit(0)
-            break;
-        default:
-            resetOperations()
-
-    }
-}
-
-
-//reset Stack operations in 5sec time interval
-function resetOperations() {
-    console.log("No valid operation selected. Resetting operations")
-    let intervalTimer = setInterval(() => {
-        if (resetTime >= 1)
-            console.log(resetTime--)
-        else {
-            stackCommandInterface()
-            clearInterval(intervalTimer)
-        }
-    }, 1000);
-}
-
-
-//getting input for the push element and then performing push operation
-function performPush() {
-    getUserInputTerminal("Enter element to push: ").then((receivedDataForPush) => {
-        myStackObject.push(receivedDataForPush)
-        stackCommandInterface()
-    })
-}
-
-
-//show all valid Stack operations
+// show DS options 
 function showOptions(options) {
     return new Promise((resolve) => {
         setTimeout(() => {
-            console.log("You have the following options for the respective Stack operations :")
+            console.log("Choose between Data Structure operations :")
             console.table(options)
             resolve(true)
         }, 500)
     })
 }
 
-
-stackCommandInterface();
+runCommandLineInterface();
